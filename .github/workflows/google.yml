@@ -1,0 +1,46 @@
+# This workflow will build a docker container and publish it to Google Container Registry.
+name: Build and Deploy to Google Container Registry
+
+on:
+  release:
+    types: [created]
+
+env:
+  GKE_CLUSTER: cluster-1
+  GKE_ZONE: us-central1-c
+  IMAGE: fitness
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    # Setup gcloud CLI
+    - uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+        service_account_key: ${{ secrets.GKE_SA_KEY }}
+        project_id: ${{ secrets.GKE_PROJECT }}
+        
+    # Configure Docker to use the gcloud command-line tool as a credential
+    # helper for authentication
+    - run: |-
+        gcloud --quiet auth configure-docker
+    - name: Build and Push Container
+      run: |-
+        docker build -t gcr.io/${{secrets.GKE_PROJECT}}/${{env.IMAGE}}:${{github.sha}} .
+        docker push gcr.io/${{secrets.GKE_PROJECT}}/${{env.IMAGE}}:${{github.sha}}
+        
+    - name: Deploy to Cloud Run
+      id: deploy
+      uses: google-github-actions/deploy-cloudrun@v0.2.0
+      with:
+        credentials: ${{secrets.GKE_SA_KEY}}
+        service: ${{env.IMAGE}}-service
+        image: gcr.io/${{secrets.GKE_PROJECT}}/${{env.IMAGE}}:${{github.sha}}
+
+    - name: Show Output
+      run: echo ${{steps.deploy.outputs.url}}
