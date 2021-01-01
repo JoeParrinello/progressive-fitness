@@ -43,7 +43,7 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 
 func getPageData() pageData {
 	data := pageData{
-		DateString: "Jan 1",
+		DateString: getDateString(),
 		WeekNum:    getWeekNum(),
 		DayNum:     getDayNum(),
 		Exercises: []exercise{
@@ -82,4 +82,8 @@ func getWeekNum() int {
 
 func getDayNum() int {
 	return time.Now().YearDay()
+}
+
+func getDateString() string {
+	return time.Now().Format("Mon, Jan 02")
 }
