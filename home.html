@@ -1,0 +1,19 @@
+<html>
+    <h1>Progressive Workout for {{.DateString}}</h1>
+    <br>
+    <i>Week {{.WeekNum}}, Day {{.DayNum}}</i>
+    <br>
+    <table>
+        <tr>
+            <th>Exercise</th>
+            <th>Reps</th>
+        </tr>
+        {{range .Exercises}}
+        <tr>
+            <td>{{.Name}}</td>
+            <td>{{.Reps}}</td>
+        </tr>
+        {{end}}
+    </table>
+
+</html>
