@@ -16,25 +16,21 @@
 }
 
 .header {
+    background: #111;
+    color: #FFF;
+    display: inline-block;
+    font-family: 'Open Sans', 'Roboto', sans-serif;
     text-align: center;
     text-transform: uppercase;
 }
 
 .header h1 {
     margin-bottom: 0.3em;
-    font-family: 'Open Sans', 'Roboto', sans-serif;
 }
 
-.subtitle {
-    text-align: center;
-    text-transform: uppercase;
-}
-
-.subtitle h2 {
+.header h2 {
     font-size: 1.1em;
-    padding-bottom: 1em;
     font-weight: 600;
-    font-family: 'Open Sans', 'Roboto', sans-serif;
 }
 
 .pure-g [class*=pure-u] { 
