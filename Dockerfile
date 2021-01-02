@@ -2,6 +2,8 @@
 # and a workspace (GOPATH) configured at /go.
 FROM golang
 
+ENV TZ='America/New_York'
+
 # Copy the local package files to the container's workspace
 ADD . /go/src/hardorange/fitness
 WORKDIR /go/src/hardorange/fitness
