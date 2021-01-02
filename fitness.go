@@ -23,6 +23,9 @@ type pageData struct {
 func main() {
 	http.HandleFunc("/", handleHome)
 
+	fs := http.FileServer(http.Dir("./static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"

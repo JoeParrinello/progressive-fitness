@@ -1,19 +1,23 @@
 <html>
-    <h1>Progressive Workout for {{.DateString}}</h1>
-    <br>
-    <i>Week {{.WeekNum}}, Day {{.DayNum}}</i>
-    <br>
-    <table>
-        <tr>
-            <th>Exercise</th>
-            <th>Reps</th>
-        </tr>
+
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
+        integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/stylesheets/home.css">
+</head>
+
+<body>
+    <div class="header"><h1>Progressive Workout for {{.DateString}}</h1></div>
+    <div class="subtitle"><h2>Week {{.WeekNum}}, Day {{.DayNum}}</h2></div>
+    <div class="pure-g exercise-grid">
+        <div class="pure-u-1-2 grid-header grid-cell">Exercise</div>
+        <div class="pure-u-1-2 grid-header grid-cell">Reps</div>
         {{range .Exercises}}
-        <tr>
-            <td>{{.Name}}</td>
-            <td>{{.Reps}}</td>
-        </tr>
+        <div class="pure-u-1-2 grid-cell">{{.Name}}</div>
+        <div class="pure-u-1-2 grid-cell">{{.Reps}}</div>
         {{end}}
-    </table>
+    </div>
+</body>
 
 </html>
