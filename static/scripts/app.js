@@ -45,10 +45,29 @@ async function scheduleNotification() {
                     icon: './static/assets/dumbbell_32.png',
                 }
             );
-            console.log("scheduled a notification for "+getTomorrowDateStamp());
+            console.log("scheduled a notification for " + getTomorrowDateStamp());
         }
     });
 };
+
+async function registerPeriodicHomeCache() {
+    const registration = await navigator.serviceWorker.ready;
+    if ('periodicSync' in registration) {
+        // Request permission
+        const status = await navigator.permissions.query({
+            name: 'periodic-background-sync',
+        });
+    }
+    if (status.state === 'granted') {
+        try {
+            await registration.periodicSync.register('fetch-home', {
+                minInterval: 2 * 60 * 60 * 1000, // Every two hours, since we can't pick what time.
+            });
+        } catch {
+            console.log('Periodic Sync could not be registered!');
+        }
+    }
+}
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker
@@ -56,4 +75,4 @@ if ('serviceWorker' in navigator) {
         .then(() => { console.log('Service Worker Registered'); });
 }
 
-navigator.serviceWorker.ready.then(() => deleteNotification()).then(() => scheduleNotification());
+navigator.serviceWorker.ready.then(() => deleteNotification()).then(() => scheduleNotification()).then(() => registerPeriodicHomeCache());

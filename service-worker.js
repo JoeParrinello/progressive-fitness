@@ -46,3 +46,15 @@ self.addEventListener('fetch', (e) => {
         })
     );
 });
+
+async function updateHome() {
+    const articlesCache = await caches.open(cacheName);
+    await articlesCache.add('/');
+    console.log('updated home');
+  }
+
+self.addEventListener('periodicsync', event => {
+    if (event.tag === 'fetch-home') {
+      event.waitUntil(updateHome());
+    }
+  });
