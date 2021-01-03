@@ -41,6 +41,8 @@ async function scheduleNotification() {
                     data: {
                         url: window.location.href,
                     },
+                    badge: './static/assets/dumbbell_128.png',
+                    icon: './static/assets/dumbbell_32.png',
                 }
             );
             console.log("scheduled a notification for "+getTomorrowDateStamp());

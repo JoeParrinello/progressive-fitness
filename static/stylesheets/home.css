@@ -34,6 +34,11 @@
     font-weight: 600;
 }
 
+.metadata {
+    padding-top: 5em;
+    font-size: .6em;
+}
+
 .pure-g [class*=pure-u] { 
     font-family: 'Roboto', sans-serif;
 }
