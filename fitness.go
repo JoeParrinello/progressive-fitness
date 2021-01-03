@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -23,6 +24,8 @@ type pageData struct {
 func main() {
 	http.HandleFunc("/", handleHome)
 
+	http.HandleFunc("/service-worker.js", sendSW)
+
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
@@ -36,6 +39,16 @@ func main() {
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal("server encountered error", err)
 	}
+}
+
+func sendSW(w http.ResponseWriter, r *http.Request) {
+	data, err := ioutil.ReadFile("service-worker.js")
+	if err != nil {
+		http.Error(w, "Couldn't read file", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/javascript; charset=utf-8")
+	w.Write(data)
 }
 
 func handleHome(w http.ResponseWriter, r *http.Request) {
