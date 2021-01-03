@@ -1,0 +1,15 @@
+{
+    "background_color": "black",
+    "description": "Renders progressive fitness routine for 2021",
+    "display": "fullscreen",
+    "icons": [
+      {
+        "src": "dumbbell_256.png",
+        "sizes": "256x256",
+        "type": "image/png"
+      }
+    ],
+    "name": "Progressive Workout",
+    "short_name": "Progressive Workout",
+    "start_url": "/"
+  }
