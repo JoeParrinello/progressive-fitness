@@ -1,6 +1,5 @@
-var cacheName = 'fitnessPWA-v1';
+var cacheName = 'fitnessPWA-v2';
 var appShellFiles = [
-    '/',
     '/static/assets/dumbbell_32.png',
     '/static/assets/dumbbell_128.png',
     '/static/assets/dumbbell_256.png',
@@ -46,15 +45,3 @@ self.addEventListener('fetch', (e) => {
         })
     );
 });
-
-async function updateHome() {
-    const articlesCache = await caches.open(cacheName);
-    await articlesCache.add('/');
-    console.log('updated home');
-  }
-
-self.addEventListener('periodicsync', event => {
-    if (event.tag === 'fetch-home') {
-      event.waitUntil(updateHome());
-    }
-  });
