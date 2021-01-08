@@ -3,6 +3,7 @@ package main
 import (
 	"io/ioutil"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"text/template"
@@ -93,7 +94,8 @@ func getJumpingJackExercise() exercise {
 }
 
 func getWeekNum() int {
-	return (getDayNum() / 7) + 1
+	return int(math.Ceil(float64(getDayNum()) / 7.0))
+
 }
 
 func getDayNum() int {
