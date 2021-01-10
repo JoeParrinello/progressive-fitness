@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"math"
@@ -8,27 +10,29 @@ import (
 	"os"
 	"text/template"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 // Exercise defines a single exercise with rep count.
 type Exercise struct {
 	Name string `json:"Name"`
-	Reps int `json:"Reps"`
+	Reps int    `json:"Reps"`
 }
 
 // Set defines a group of Exercises for a given day.
 type Set struct {
-	Date string `json:"Date"`
+	Date      string     `json:"Date"`
 	Exercises []Exercise `json:"Exercises"`
 }
 
 func main() {
-	http.HandleFunc("/", handleHome)
+	myRouter := mux.NewRouter().StrictSlash(true)
+	myRouter.HandleFunc("/", handleHome)
+	myRouter.HandleFunc("/set/{year:[0-9]{4}}/{month:[0-9]{1,2}}/{day:[0-9]{1,2}}", returnSet)
+	myRouter.HandleFunc("/service-worker.js", sendSW)
 
-	http.HandleFunc("/service-worker.js", sendSW)
-
-	fs := http.FileServer(http.Dir("./static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	myRouter.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -37,7 +41,7 @@ func main() {
 	}
 
 	log.Printf("listening on port %s", port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
+	if err := http.ListenAndServe(":"+port, myRouter); err != nil {
 		log.Fatal("server encountered error", err)
 	}
 }
@@ -55,51 +59,67 @@ func sendSW(w http.ResponseWriter, r *http.Request) {
 func handleHome(w http.ResponseWriter, r *http.Request) {
 	log.Println("serving home")
 	tmpl := template.Must(template.ParseFiles("home.html"))
-	tmpl.Execute(w, getSet())
+	tmpl.Execute(w, getSet(time.Now()))
 }
 
-func getSet() Set {
+func getSet(t time.Time) Set {
 	data := Set{
-		Date: getDateString(),
+		Date: getDateString(t),
 		Exercises: []Exercise{
-			getPushUpExercise(),
-			getSitUpExercise(),
-			getJumpingJackExercise(),
+			getPushUpExercise(t),
+			getSitUpExercise(t),
+			getJumpingJackExercise(t),
 		},
 	}
 	return data
 }
 
-func getPushUpExercise() Exercise {
+func getPushUpExercise(t time.Time) Exercise {
 	return Exercise{
 		Name: "Push Ups",
-		Reps: getWeekNum(),
+		Reps: getWeekNum(t),
 	}
 }
 
-func getSitUpExercise() Exercise {
+func getSitUpExercise(t time.Time) Exercise {
 	return Exercise{
 		Name: "Sit Ups",
-		Reps: getWeekNum(),
+		Reps: getWeekNum(t),
 	}
 }
 
-func getJumpingJackExercise() Exercise {
+func getJumpingJackExercise(t time.Time) Exercise {
 	return Exercise{
 		Name: "Jumping Jacks",
-		Reps: getDayNum(),
+		Reps: getDayNum(t),
 	}
 }
 
-func getWeekNum() int {
-	return int(math.Ceil(float64(getDayNum()) / 7.0))
+func getWeekNum(t time.Time) int {
+	return int(math.Ceil(float64(getDayNum(t)) / 7.0))
 
 }
 
-func getDayNum() int {
-	return time.Now().YearDay()
+func getDayNum(t time.Time) int {
+	return t.YearDay()
 }
 
-func getDateString() string {
-	return time.Now().Format("2006-01-02")
+func getDateString(t time.Time) string {
+	return t.Format("2006-01-02")
+}
+
+func getDate(year string, month string, day string) (time.Time, error) {
+	return time.Parse("2006-01-02", fmt.Sprintf("%s-%s-%s", year, month, day))
+}
+
+func returnSet(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	year, month, day := vars["year"], vars["month"], vars["day"]
+	requestDate, err := getDate(year, month, day)
+	if err != nil {
+		http.Error(w, "Error parsing date", http.StatusInternalServerError)
+	}
+
+	log.Printf("Date: %s", getDateString(requestDate))
+	json.NewEncoder(w).Encode(getSet(requestDate))
 }
