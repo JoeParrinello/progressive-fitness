@@ -104,4 +104,6 @@ function fetchCurrentDaysData() {
 }
 
 fetchCurrentDaysData();
-navigator.serviceWorker.ready.then(() => deleteNotification()).then(() => scheduleNotification());
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.ready.then(() => deleteNotification()).then(() => scheduleNotification());
+}
