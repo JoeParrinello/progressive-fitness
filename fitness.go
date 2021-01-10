@@ -29,7 +29,7 @@ type Set struct {
 func main() {
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/", handleHome)
-	myRouter.HandleFunc("/set/{year:[0-9]{4}}/{month:[0-9]{1,2}}/{day:[0-9]{1,2}}", returnSet)
+	myRouter.HandleFunc("/set/{year:[0-9]{4}}/{month:[0-9]{2}}/{day:[0-9]{2}}", returnSet)
 	myRouter.HandleFunc("/service-worker.js", sendSW)
 
 	myRouter.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
@@ -113,11 +113,13 @@ func getDate(year string, month string, day string) (time.Time, error) {
 }
 
 func returnSet(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Handling /set")
 	vars := mux.Vars(r)
 	year, month, day := vars["year"], vars["month"], vars["day"]
 	requestDate, err := getDate(year, month, day)
 	if err != nil {
 		http.Error(w, "Error parsing date", http.StatusInternalServerError)
+		return
 	}
 
 	log.Printf("Date: %s", getDateString(requestDate))
