@@ -10,16 +10,16 @@ import (
 	"time"
 )
 
-type exercise struct {
-	Name string
-	Reps int
+// Exercise defines a single exercise with rep count.
+type Exercise struct {
+	Name string `json:"Name"`
+	Reps int `json:"Reps"`
 }
 
-type pageData struct {
-	DateString string
-	WeekNum    int
-	DayNum     int
-	Exercises  []exercise
+// Set defines a group of Exercises for a given day.
+type Set struct {
+	Date string `json:"Date"`
+	Exercises []Exercise `json:"Exercises"`
 }
 
 func main() {
@@ -55,15 +55,13 @@ func sendSW(w http.ResponseWriter, r *http.Request) {
 func handleHome(w http.ResponseWriter, r *http.Request) {
 	log.Println("serving home")
 	tmpl := template.Must(template.ParseFiles("home.html"))
-	tmpl.Execute(w, getPageData())
+	tmpl.Execute(w, getSet())
 }
 
-func getPageData() pageData {
-	data := pageData{
-		DateString: getDateString(),
-		WeekNum:    getWeekNum(),
-		DayNum:     getDayNum(),
-		Exercises: []exercise{
+func getSet() Set {
+	data := Set{
+		Date: getDateString(),
+		Exercises: []Exercise{
 			getPushUpExercise(),
 			getSitUpExercise(),
 			getJumpingJackExercise(),
@@ -72,22 +70,22 @@ func getPageData() pageData {
 	return data
 }
 
-func getPushUpExercise() exercise {
-	return exercise{
+func getPushUpExercise() Exercise {
+	return Exercise{
 		Name: "Push Ups",
 		Reps: getWeekNum(),
 	}
 }
 
-func getSitUpExercise() exercise {
-	return exercise{
+func getSitUpExercise() Exercise {
+	return Exercise{
 		Name: "Sit Ups",
 		Reps: getWeekNum(),
 	}
 }
 
-func getJumpingJackExercise() exercise {
-	return exercise{
+func getJumpingJackExercise() Exercise {
+	return Exercise{
 		Name: "Jumping Jacks",
 		Reps: getDayNum(),
 	}
@@ -103,5 +101,5 @@ func getDayNum() int {
 }
 
 func getDateString() string {
-	return time.Now().Format("Mon, Jan 02")
+	return time.Now().Format("2006-01-02")
 }
