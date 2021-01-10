@@ -1,39 +1,32 @@
 <html>
 
 <head>
-    <title>Progressive Workout Tracker</title>
-    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
-        integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/static/stylesheets/home.css">
-    <link rel="icon" href="/static/assets/favicon.ico">
-    <link rel="manifest" href="/static/assets/progressive-fitness.webmanifest">
+  <title>Progressive Workout Tracker</title>
+  <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
+    integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/stylesheets/home.css">
+  <link rel="icon" href="/static/assets/favicon.ico">
+  <link rel="manifest" href="/static/assets/progressive-fitness.webmanifest">
 </head>
 
 <body>
-    <div class="header 1-box">
-        <h1>Progressive Workout for {{.Date}}</h1>
-    </div>
-    <div class="pure-g exercise-grid">
-        <div class="pure-u-1-2 grid-header grid-cell">Exercise</div>
-        <div class="pure-u-1-2 grid-header grid-cell">Reps</div>
-        {{range .Exercises}}
-        <div style="width:100%">
-            <input type="checkbox" style="display:none" id="{{.Name}}" class="checks">
-            <label class="pure-u-1-2 grid-cell" for="{{.Name}}">
-                <div>{{.Name}}</div>
-            </label>
-            <label class="pure-u-1-2 grid-cell" for="{{.Name}}">
-                <div>{{.Reps}}</div>
-            </label>
-        </div>
-        {{end}}
-        <div class="pure-u-1 metadata">Icons made by <a href="https://www.flaticon.com/authors/freepik"
-                title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/"
-                title="Flaticon">www.flaticon.com</a></div>
-    </div>
+  <div class="header 1-box">
+    <h1 id="header-date">Progressive Workout for Today</h1>
+  </div>
+  <div class="pure-g exercise-grid" id="exercise-grid">
+    <div id="grid-loader" class="pure-u-1 grid-cell">Loading...</div>
+    <div class="pure-u-1-2 grid-header grid-cell">Exercise</div>
+    <div class="pure-u-1-2 grid-header grid-cell">Reps</div>
+    <!-- Empty for online fetched content. -->
+  </div>
+  <div class="pure-g" style="text-align: center;">
+    <div class="pure-u-1 metadata">Icons made by <a href="https://www.flaticon.com/authors/freepik"
+        title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+  </div>
+
 </body>
 <script src="/static/scripts/app.js"></script>
 
