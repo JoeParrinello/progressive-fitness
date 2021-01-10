@@ -79,11 +79,7 @@ function displayExercises(setData) {
   });
 }
 
-function fetchCurrentDaysData() {
-  const now = new Date();
-  const year = now.getUTCFullYear().toString();
-  const month = (now.getUTCMonth() + 1) < 10 ? '0' + (now.getUTCMonth() + 1) : (now.getUTCMonth() + 1).toString();
-  const day = now.getUTCDate() < 10 ? '0' + now.getUTCDate() : now.getUTCDate().toString()
+function getDaysData(year, month, day) {
   if ('localStorage' in window) {
     const cachedData = localStorage.getItem(`${year}-${month}-${day}`)
     if (cachedData) {
@@ -117,7 +113,15 @@ function fetchCurrentDaysData() {
     });
 }
 
-fetchCurrentDaysData();
+function getCurrentDaysData() {
+  const now = new Date();
+  const year = now.getUTCFullYear().toString();
+  const month = (now.getUTCMonth() + 1) < 10 ? '0' + (now.getUTCMonth() + 1) : (now.getUTCMonth() + 1).toString();
+  const day = now.getUTCDate() < 10 ? '0' + now.getUTCDate() : now.getUTCDate().toString();
+  getDaysData(year, month, day);
+}
+
+getCurrentDaysData();
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.ready.then(() => deleteNotification()).then(() => scheduleNotification());
 }
