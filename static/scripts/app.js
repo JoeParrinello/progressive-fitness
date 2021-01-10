@@ -56,11 +56,42 @@ if ('serviceWorker' in navigator) {
     .then(() => { console.log('Service Worker Registered'); });
 }
 
+function displayExercises(setData) {
+  const loadingElement = document.getElementById('grid-loader');
+  loadingElement.remove();
+  const date = setData["Date"];
+  const dateElement = document.getElementById('header-date');
+  dateElement.innerHTML = `Progressive Workout for ${date}`;
+  const exercises = setData["Exercises"];
+  const grid = document.getElementById('exercise-grid');
+  exercises.forEach((exercise) => {
+    const html = `
+    <div style="width:100%">
+      <input type="checkbox" style="display:none" id="${exercise.Name}" class="checks">
+      <label class="pure-u-1-2 grid-cell" for="${exercise.Name}">
+        <div>${exercise.Name}</div>
+      </label>
+      <label class="pure-u-1-2 grid-cell" for="${exercise.Name}">
+        <div>${exercise.Reps}</div>
+      </label>
+    </div>`;
+    grid.insertAdjacentHTML('beforeend', html);
+  });
+}
+
 function fetchCurrentDaysData() {
   const now = new Date();
   const year = now.getUTCFullYear().toString();
   const month = (now.getUTCMonth() + 1) < 10 ? '0' + (now.getUTCMonth() + 1) : (now.getUTCMonth() + 1).toString();
   const day = now.getUTCDate() < 10 ? '0' + now.getUTCDate() : now.getUTCDate().toString()
+  if ('localStorage' in window) {
+    const cachedData = localStorage.getItem(`${year}-${month}-${day}`)
+    if (cachedData) {
+      displayExercises(JSON.parse(cachedData));
+      return;
+    }
+    // Else, fall through and fetch.
+  }
 
   fetch('./set/' + year + '/' + month + '/' + day)
     .then(
@@ -73,28 +104,11 @@ function fetchCurrentDaysData() {
 
         // Examine the text in the response
         response.json().then((data) => {
-          const loadingElement = document.getElementById('grid-loader');
-          loadingElement.remove();
           console.log(data);
-          const date = data["Date"];
-          const dateElement = document.getElementById('header-date');
-          dateElement.innerHTML = `Progressive Workout for ${date}`;
-          const exercises = data["Exercises"];
-          const grid = document.getElementById('exercise-grid');
-          exercises.forEach((exercise) => {
-            const html = `
-            <div style="width:100%">
-              <input type="checkbox" style="display:none" id="${exercise.Name}" class="checks">
-              <label class="pure-u-1-2 grid-cell" for="${exercise.Name}">
-                <div>${exercise.Name}</div>
-              </label>
-              <label class="pure-u-1-2 grid-cell" for="${exercise.Name}">
-                <div>${exercise.Reps}</div>
-              </label>
-            </div>`;
-            grid.insertAdjacentHTML('beforeend', html);
-          });
-
+          displayExercises(data);
+          if ('localStorage' in window) {
+            window.localStorage.setItem(data["Date"], JSON.stringify(data));
+          }
         });
       }
     )
